@@ -19,8 +19,66 @@ void directory_operations();
 void start_keylogger();
 void stop_keylogger(int sig);
 
+void install_manual()
+{
+    // Check if the manual already exists
+    if (access("/usr/share/man/man1/supercommand.1", F_OK) == 0)
+    {
+        // Manual already exists
+        return;
+    }
+
+    // Manual does not exist, install it
+    printf("[+] Installing manual page...\n");
+
+    // Copy the manual page to the man directory
+    if (system("sudo cp supercommand.1 /usr/share/man/man1/") != 0)
+    {
+        fprintf(stderr, "[-] Failed to copy the manual page. Please ensure you have 'supercommand.1' in the parent directory.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Update the man database
+    if (system("sudo mandb") != 0)
+    {
+        fprintf(stderr, "[-] Failed to update the man database.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    printf("[+] Manual page installed successfully.\n");
+}
+
+void print_usage_and_exit(const char *prog_name)
+{
+    fprintf(stderr, "Usage: %s -m <mode> <operation> <filename/directory>\n", prog_name);
+    fprintf(stderr, "       %s -h|--help\n", prog_name);
+    exit(EXIT_FAILURE);
+}
+
 int main(int argc, char *argv[])
 {
+    if (argc < 2)
+    {
+        print_usage_and_exit(argv[0]);
+    }
+
+    // Handle the "-h" or "--help" flag
+    if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0)
+    {
+        install_manual();
+
+        // Display the manual page using the "man" command
+        if (system("man supercommand") != 0)
+        {
+            fprintf(stderr, "[-] Failed to display the manual. Please ensure 'supercommand.1' is installed in the man directory.\n");
+        }
+        return 0;
+    }
+
+    if (argc < 4)
+    {
+        print_usage_and_exit(argv[0]);
+    }
 
     int mode = atoi(argv[2]);
     int operation = atoi(argv[3]);

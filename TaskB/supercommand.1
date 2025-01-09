@@ -1,0 +1,163 @@
+.TH SUPERCOMMAND 1 "January 2025" "Version 1.0" "User Commands"
+.SH NAME
+supercommand \- A tool for file operations, directory management, and keylogging
+.SH SYNOPSIS
+.B supercommand
+[\fB\-m\fR \fImode\fR] [\fIoperation_code\fR] [\fIfile_or_directory\fR]
+.br
+.B supercommand
+[\fB\-h\fR|\fB\-\-help\fR]
+.SH DESCRIPTION
+.B supercommand
+is a command-line utility that allows users to perform various system tasks such as file operations, directory management, and keylogging. It is designed to be simple to use and flexible with a range of modes to interact with the system. Some operations require root privileges.
+.SH OPTIONS
+.TP
+.BI "\-m " mode
+Specifies the operation mode. The available modes are:
+.RS
+.TP
+.B 1
+File operations
+.TP
+.B 2
+Directory operations
+.TP
+.B 3
+Keylogger
+.RE
+.TP
+.BR \-h ", " \-\-help
+Displays the help manual with information about the usage, available options, modes, and examples.
+.TP
+.I operation_code
+The operation to be performed, dependent on the selected mode. See below for available codes.
+.TP
+.I file_or_directory
+The file or directory involved in the operation (e.g., filename for file operations, directory name for directory operations).
+.SH FILE OPERATIONS (MODE 1)
+.PP
+\fB\-m 1\fR \fI<operation_code>\fR \fI<filename>\fR
+.PP
+The following operations are available in file operation mode:
+.TP
+.B 1
+Create or open a file
+.TP
+.B 2
+Change file permissions
+.TP
+.B 3
+Read from a file
+.TP
+.B 4
+Write to a file
+.TP
+.B 5
+Delete a file
+.PP
+Example usage:
+.PP
+Create/Open a file:
+.PP
+.RS
+supercommand \-m 1 1 testfile.txt
+.RE
+.PP
+Change file permissions:
+.PP
+.RS
+supercommand \-m 1 2 testfile.txt
+.RE
+.PP
+Read from a file:
+.PP
+.RS
+supercommand \-m 1 3 testfile.txt
+.RE
+.PP
+Write to a file:
+.PP
+.RS
+supercommand \-m 1 4 testfile.txt
+.RE
+.PP
+Delete a file:
+.PP
+.RS
+supercommand \-m 1 5 testfile.txt
+.RE
+.SH DIRECTORY OPERATIONS (MODE 2)
+.PP
+\fB\-m 2\fR \fI<operation_code>\fR \fI<directory_name>\fR
+.PP
+The following operations are available in directory operation mode:
+.TP
+.B 1
+Create a directory
+.TP
+.B 2
+Remove a directory
+.TP
+.B 3
+Print the current working directory
+.TP
+.B 4
+List the contents of a directory
+.PP
+Example usage:
+.PP
+Create a new directory:
+.PP
+.RS
+supercommand \-m 2 1 testdir
+.RE
+.PP
+Remove a directory:
+.PP
+.RS
+supercommand \-m 2 2 testdir
+.RE
+.PP
+Print the current directory:
+.PP
+.RS
+supercommand \-m 2 3 .
+.RE
+.PP
+List contents of a directory:
+.PP
+.RS
+supercommand \-m 2 4 .
+.RE
+.SH KEYLOGGER (MODE 3)
+.PP
+\fB\-m 3\fR \fI<log_filename>\fR
+.PP
+This mode requires \fBsudo\fR to enable keystroke logging and saves the recorded keystrokes into the specified log file.
+.PP
+Example usage:
+.PP
+Start keylogging and save to a log file:
+.PP
+.RS
+sudo supercommand \-m 3 keylog.txt
+.RE
+.SH EXITING THE PROGRAM
+To exit the program, use the following command:
+.PP
+.RS
+exit
+.RE
+.PP
+Alternatively, terminate the program with \fBCtrl+C\fR.
+.SH ERRORS
+.TP
+.B Permission denied
+This error occurs when attempting to perform an operation that requires root privileges. Use \fBsudo\fR to execute with root access:
+.PP
+.RS
+sudo supercommand \-m <mode> <operation_code> <file_or_directory>
+.RE
+.TP
+.B Operation not permitted
+This error may occur if the file or directory does not exist or is inaccessible. Ensure that the file or directory is valid and that you have permission to perform the requested operation.
