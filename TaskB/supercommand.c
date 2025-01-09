@@ -183,70 +183,53 @@ void file_operations(int mode, char *filename)
 
 void directory_operations(int mode, char *path)
 {
-    int choice;
-    char dirname[256];
     DIR *dir;
     struct dirent *entry;
 
-    printf("\n");
-
-    printf("Directory Operations Menu:\n");
-    printf("1. Create a new directory\n");
-    printf("2. Remove or delete a directory\n");
-    printf("3. Print the current working directory\n");
-    printf("4. List the contents of a directory\n");
-    printf("Enter your choice: ");
-    scanf("%d", &choice);
-
-    printf("\n");
-
-    switch (choice)
+    switch (mode)
     {
-    case 1:
-        printf("Enter the directory name: ");
-        scanf("%s", dirname);
-        if (mkdir(dirname, 0755) == -1)
+    case 1: // Create a new directory
+        if (mkdir(path, 0755) == -1)
         {
             perror("[-] Error creating directory");
         }
         else
         {
-            printf("[+] Directory %s created successfully.\n", dirname);
+            printf("[+] Directory %s created successfully.\n", path);
         }
         break;
-    case 2:
-        printf("Enter the directory name: ");
-        scanf("%s", dirname);
-        if (rmdir(dirname) == -1)
+    case 2: // Remove directory
+        if (rmdir(path) == -1)
         {
             perror("[-] Error deleting directory");
         }
         else
         {
-            printf("[+] Directory %s deleted successfully.\n", dirname);
+            printf("[+] Directory %s deleted successfully.\n", path);
         }
         break;
-    case 3:
-        if (getcwd(dirname, sizeof(dirname)) == NULL)
+    case 3: // Print current working directory
+    {
+        char cwd[1024];
+        if (getcwd(cwd, sizeof(cwd)) == NULL)
         {
             perror("[-] Error getting current working directory");
         }
         else
         {
-            printf("[+] Current working directory: %s\n", dirname);
+            printf("[+] Current working directory: %s\n", cwd);
         }
         break;
-    case 4:
-        printf("Enter the directory name: ");
-        scanf("%s", dirname);
-        dir = opendir(dirname);
+    }
+    case 4: // List contents of a directory
+        dir = opendir(path);
         if (dir == NULL)
         {
             perror("[-] Error opening directory");
         }
         else
         {
-            printf("[+] Contents of directory %s:\n", dirname);
+            printf("[+] Contents of directory %s:\n", path);
             while ((entry = readdir(dir)) != NULL)
             {
                 printf("%s\n", entry->d_name);
@@ -255,7 +238,7 @@ void directory_operations(int mode, char *path)
         }
         break;
     default:
-        printf("[-] Invalid choice. Please try again.\n");
+        fprintf(stderr, "[-] Invalid operation for directory operations.\n");
     }
 }
 
