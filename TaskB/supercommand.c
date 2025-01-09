@@ -61,31 +61,13 @@ int main(int argc, char *argv[])
 
 void file_operations(int mode, char *filename)
 {
-    int choice;
-    char filename[256];
     int fd;
     char buffer[1024];
     ssize_t bytes;
 
-    printf("\n");
-
-    printf("File Operations Menu:\n");
-    printf("1. Create/Open a new file\n");
-    printf("2. Change the file permissions\n");
-    printf("3. Read from a file\n");
-    printf("4. Write to a file\n");
-    printf("5. Remove or delete a file\n");
-    printf("Enter your choice: ");
-    scanf("%d", &choice);
-
-    printf("\n");
-
-    switch (choice)
+    switch (mode)
     {
-    case 1:
-        printf("Enter the filename: ");
-        scanf("%s", filename);
-
+    case 1: // Create/Open a new file
         // Check if the directory exists, if not create it
         char *dir = strdup(filename);
         char *last_slash = strrchr(dir, '/');
@@ -121,9 +103,7 @@ void file_operations(int mode, char *filename)
             close(fd);
         }
         break;
-    case 2:
-        printf("Enter the filename: ");
-        scanf("%s", filename);
+    case 2: // Change file permissions
         printf("Enter the new permissions (in octal): ");
         int permissions;
         scanf("%o", &permissions);
@@ -131,9 +111,9 @@ void file_operations(int mode, char *filename)
         // Validate the octal permission
         if (permissions < 0 || permissions > 0777)
         {
-            perror("[-] Invalid permissions. Please enter a value between 000 and 777.\n");
+            fprintf(stderr, "[-] Invalid permissions. Please enter a value between 000 and 777.\n");
         }
-        if (chmod(filename, permissions) == -1)
+        else if (chmod(filename, permissions) == -1)
         {
             perror("[-] Error changing file permissions");
         }
@@ -142,9 +122,7 @@ void file_operations(int mode, char *filename)
             printf("[+] Permissions of file %s changed successfully.\n", filename);
         }
         break;
-    case 3:
-        printf("Enter the filename: ");
-        scanf("%s", filename);
+    case 3: // Read from file
         fd = open(filename, O_RDONLY);
         if (fd == -1)
         {
@@ -165,9 +143,7 @@ void file_operations(int mode, char *filename)
             close(fd);
         }
         break;
-    case 4:
-        printf("Enter the filename: ");
-        scanf("%s", filename);
+    case 4: // Write to file
         fd = open(filename, O_WRONLY | O_APPEND);
         if (fd == -1)
         {
@@ -189,9 +165,7 @@ void file_operations(int mode, char *filename)
             close(fd);
         }
         break;
-    case 5:
-        printf("Enter the filename: ");
-        scanf("%s", filename);
+    case 5: // Remove file
         if (remove(filename) == -1)
         {
             perror("[-] Error deleting file");
@@ -202,7 +176,7 @@ void file_operations(int mode, char *filename)
         }
         break;
     default:
-        printf("[-] Invalid choice. Please try again.\n");
+        fprintf(stderr, "[-] Invalid operation for file operations.\n");
     }
 }
 
